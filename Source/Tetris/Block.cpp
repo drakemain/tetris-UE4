@@ -40,3 +40,8 @@ void ABlock::Tick(float DeltaTime)
 
 }
 
+int ABlock::getSize() const
+{
+	return this->SIZE;
+}
+

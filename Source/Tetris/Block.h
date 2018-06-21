@@ -24,6 +24,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	int getSize() const;
+
+	static const int SIZE = 100;
+
 private:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
@@ -31,5 +35,5 @@ private:
 	UPROPERTY(EditAnywhere)
 	UMaterialInstance* Material;
 
-	const int Size = 10;
+	
 };

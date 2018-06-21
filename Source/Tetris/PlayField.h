@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Block.h"
+#include "Runtime/Engine/Classes/Camera/CameraComponent.h"
 #include "PlayField.generated.h"
 
 UCLASS()
@@ -29,7 +30,14 @@ public:
 
 
 private:
+	void CreateBorder();
+
 	const int HEIGHT = 20;
 	const int WIDTH = 10;
-	
+
+	ABlock* CreateCell(FVector2D FieldPosition);
+	TArray<ABlock*> BorderBlocks;
+
+	UPROPERTY(EditAnywhere)
+	UCameraComponent* Camera;
 };
