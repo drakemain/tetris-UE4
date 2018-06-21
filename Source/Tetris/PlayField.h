@@ -40,4 +40,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;
+
+	FVector CameraPosition;
 };

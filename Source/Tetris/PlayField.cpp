@@ -11,7 +11,14 @@ APlayField::APlayField()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	this->BorderBlocks.Reserve((this->HEIGHT * 2) + this->WIDTH + 2);
+
+	this->RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+
 	this->Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	this->Camera->SetupAttachment(this->RootComponent);
+
+	this->AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
@@ -19,6 +26,8 @@ void APlayField::BeginPlay()
 {
 	Super::BeginPlay();
 	this->CreateBorder();
+
+	this->Camera->SetRelativeLocation(FVector{ -2600.f, -(float)((this->WIDTH * ABlock::SIZE) / 2), (float)((this->HEIGHT * ABlock::SIZE) / 2) });
 }
 
 // Called every frame
@@ -37,29 +46,16 @@ void APlayField::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void APlayField::CreateBorder()
 {
-	// Two blocks for each row, one block for each column, one block for each bottom corner
-	int totalBorderBlocks = (this->HEIGHT * 2) + this->WIDTH + 2;
-	int blockCounter = 0;
-
-	UE_LOG(LogTemp, Warning, TEXT("Reserved space for blocks: %i"), totalBorderBlocks);
-
-	this->BorderBlocks.Reserve(totalBorderBlocks);
-
 	for (int i = -1; i < this->HEIGHT; ++i) 
 	{
 		this->BorderBlocks.Push(this->CreateCell({ -1.f, (float)i }));
 		this->BorderBlocks.Push(this->CreateCell({ (float)this->WIDTH, (float)i }));
-
-		blockCounter += 2;
 	}
 
 	for (int i = 0; i < this->WIDTH; ++i) 
 	{
 		this->BorderBlocks.Push(this->CreateCell({ (float)i, -1.f }));
-		++blockCounter;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Created blocks: %i"), blockCounter);
 }
 
 ABlock* APlayField::CreateCell(FVector2D FieldPosition)
