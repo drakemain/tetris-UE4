@@ -32,6 +32,10 @@ public:
 private:
 	void CreateBorder();
 
+	void ShiftDown();
+	void ShiftLeft();
+	void ShiftRight();
+
 	const int HEIGHT = 20;
 	const int WIDTH = 10;
 

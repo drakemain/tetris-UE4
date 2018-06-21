@@ -42,6 +42,16 @@ void APlayField::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
+	if (PlayerInputComponent)
+	{
+		PlayerInputComponent->BindAction("ShiftDown", IE_Pressed, this, &APlayField::ShiftDown);
+		PlayerInputComponent->BindAction("ShiftLeft", IE_Pressed, this, &APlayField::ShiftLeft);
+		PlayerInputComponent->BindAction("ShiftRight", IE_Pressed, this, &APlayField::ShiftLeft);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No input component!"));
+	}
 }
 
 void APlayField::CreateBorder()
@@ -56,6 +66,21 @@ void APlayField::CreateBorder()
 	{
 		this->BorderBlocks.Push(this->CreateCell({ (float)i, -1.f }));
 	}
+}
+
+void APlayField::ShiftDown()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SHIFT DOWN"));
+}
+
+void APlayField::ShiftLeft()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SHIFT LEFT"));
+}
+
+void APlayField::ShiftRight()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SHIFT RIGHT"));
 }
 
 ABlock* APlayField::CreateCell(FVector2D FieldPosition)
