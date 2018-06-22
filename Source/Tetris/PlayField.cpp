@@ -77,12 +77,12 @@ void APlayField::SpawnNewTetromino(ETetrominoShape Shape)
 	
 	if ((uint8)Shape == 0xFF)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Picking random shape."));
 		Shape = this->PickRandomShape();
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("SHAPE: %i"), (uint8)Shape);
 	this->ActiveTetromino->GenerateShape(Shape);
+
+	this->Shift({ -(float)FMath::DivideAndRoundDown(this->ActiveTetromino->GetDimensions().X, 2), 0 });
 }
 
 ETetrominoShape APlayField::PickRandomShape()

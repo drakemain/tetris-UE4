@@ -39,10 +39,12 @@ public:
 
 	void GenerateShape(ETetrominoShape Shape);
 
+	FIntPoint GetDimensions() const;
+
 private:
 	void spawnBlock(FVector2D OffsetLocation);
 
 	TArray<ABlock*> Blocks;
 
-	FIntPoint ShapeDimensions;
+	FIntPoint ShapeDimensions = FIntPoint::ZeroValue;
 };

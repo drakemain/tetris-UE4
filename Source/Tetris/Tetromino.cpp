@@ -132,6 +132,11 @@ void ATetromino::GenerateShape(ETetrominoShape Shape)
 	
 }
 
+FIntPoint ATetromino::GetDimensions() const
+{
+	return this->ShapeDimensions;
+}
+
 void ATetromino::spawnBlock(FVector2D OffsetLocation)
 {
 	FVector BlockLocation = this->GetActorLocation();
