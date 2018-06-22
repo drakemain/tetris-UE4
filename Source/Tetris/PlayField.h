@@ -32,7 +32,8 @@ public:
 
 private:
 	void CreateBorder();
-	void SpawnNewTetromino();
+	void SpawnNewTetromino(ETetrominoShape Shape);
+	ETetrominoShape PickRandomShape();
 
 	ABlock* CreateBlock(FVector2D FieldPosition);
 

@@ -66,7 +66,6 @@ ATetromino::ATetromino()
 void ATetromino::BeginPlay()
 {
 	Super::BeginPlay();
-	this->GenerateShape(ETetrominoShape::S);
 }
 
 // Called every frame
@@ -115,17 +114,22 @@ void ATetromino::GenerateShape(ETetrominoShape Shape)
 
 	if (ShapeMatrix != nullptr)
 	{
-		for (int i = 0; i < ShapeMatrix->Num(); ++i)
+		this->ShapeDimensions.X = ShapeMatrix->operator[](0).Num();
+		this->ShapeDimensions.Y = ShapeMatrix->Num();
+
+		for (int i = 0; i < this->ShapeDimensions.Y; ++i)
 		{
-			for (int j = 0; j < ShapeMatrix->operator[](i).Num(); ++j)
+			for (int j = 0; j < this->ShapeDimensions.X; ++j)
 			{
 				if (ShapeMatrix->operator[](i)[j] != 0)
 				{
-					this->spawnBlock({ (float)j, (float)ShapeMatrix->Num() - i });
+					this->spawnBlock({ (float)j, (float)ShapeMatrix->Num() - i - 1 });
 				}
 			}
 		}
 	}
+
+	
 }
 
 void ATetromino::spawnBlock(FVector2D OffsetLocation)

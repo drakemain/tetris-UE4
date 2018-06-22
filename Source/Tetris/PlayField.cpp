@@ -28,7 +28,7 @@ void APlayField::BeginPlay()
 	this->CreateBorder();
 
 	this->Camera->SetRelativeLocation(FVector{ -2600.f, (float)((this->WIDTH * ABlock::SIZE) / 2), (float)((this->HEIGHT * ABlock::SIZE) / 2) });
-	this->SpawnNewTetromino();
+	this->SpawnNewTetromino((ETetrominoShape)0xFF);
 }
 
 // Called every frame
@@ -69,11 +69,25 @@ void APlayField::CreateBorder()
 	}
 }
 
-void APlayField::SpawnNewTetromino()
+void APlayField::SpawnNewTetromino(ETetrominoShape Shape)
 {
 	FVector SpawnLocation = this->GetFieldPositionLocation({ FMath::DivideAndRoundDown((float)this->WIDTH, 2.f), (float)this->HEIGHT });
 
 	this->ActiveTetromino = this->GetWorld()->SpawnActor<ATetromino>(SpawnLocation, FRotator::ZeroRotator);
+	
+	if ((uint8)Shape == 0xFF)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Picking random shape."));
+		Shape = this->PickRandomShape();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("SHAPE: %i"), (uint8)Shape);
+	this->ActiveTetromino->GenerateShape(Shape);
+}
+
+ETetrominoShape APlayField::PickRandomShape()
+{
+	return ETetrominoShape(rand() % ATetromino::SHAPE_COUNT);
 }
 
 ABlock* APlayField::CreateBlock(FVector2D FieldPosition)
