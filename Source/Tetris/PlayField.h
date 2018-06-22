@@ -32,23 +32,35 @@ public:
 
 private:
 	void CreateBorder();
+
+	// Spawns a tetromino at the center-top of the field and sets it as the active tetromino. Pass in 0xFF for a random shape.
 	void SpawnNewTetromino(ETetrominoShape Shape);
+
 	ETetrominoShape PickRandomShape();
 
+	// Spawns a block at the given field position
 	ABlock* CreateBlock(FVector2D FieldPosition);
 
 	// Map the 2D position on the field to 3d world coordinates
 	FVector GetFieldPositionLocation(FVector2D FieldPosition);
 
-	void ShiftDown();
-	void ShiftLeft();
-	void ShiftRight();
+	/* User input methods */
+	void OnShiftDown();
+	void OnShiftLeft();
+	void OnShiftRight();
+	void OnSpawnTetromino();
+
+	// Move active tetromino to new field position relative to current position
 	void Shift(FVector2D Direction);
+
+	// Push active tetromino to PlacedTetrominos and set ActiveTetromino to nullptr
+	void PlaceActiveTetromino();
 
 	const int HEIGHT = 20;
 	const int WIDTH = 10;
 	
 	TArray<ABlock*> BorderBlocks;
+	TArray<ATetromino*> PlacedTetrominoes;
 	ATetromino* ActiveTetromino;
 
 	UPROPERTY(EditAnywhere)

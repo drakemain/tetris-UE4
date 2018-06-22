@@ -45,9 +45,12 @@ void APlayField::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	
 	if (PlayerInputComponent)
 	{
-		PlayerInputComponent->BindAction("ShiftDown", IE_Pressed, this, &APlayField::ShiftDown);
-		PlayerInputComponent->BindAction("ShiftLeft", IE_Pressed, this, &APlayField::ShiftLeft);
-		PlayerInputComponent->BindAction("ShiftRight", IE_Pressed, this, &APlayField::ShiftRight);
+		PlayerInputComponent->BindAction("ShiftDown", IE_Pressed, this, &APlayField::OnShiftDown);
+		PlayerInputComponent->BindAction("ShiftLeft", IE_Pressed, this, &APlayField::OnShiftLeft);
+		PlayerInputComponent->BindAction("ShiftRight", IE_Pressed, this, &APlayField::OnShiftRight);
+
+		// Temporary for testing
+		PlayerInputComponent->BindAction("SpawnNewTetromino", IE_Pressed, this, &APlayField::OnSpawnTetromino);
 	}
 	else
 	{
@@ -71,10 +74,14 @@ void APlayField::CreateBorder()
 
 void APlayField::SpawnNewTetromino(ETetrominoShape Shape)
 {
+	// Spawn the tetromino's centered at the top of the field
 	FVector SpawnLocation = this->GetFieldPositionLocation({ FMath::DivideAndRoundDown((float)this->WIDTH, 2.f), (float)this->HEIGHT });
+
+	this->PlaceActiveTetromino();
 
 	this->ActiveTetromino = this->GetWorld()->SpawnActor<ATetromino>(SpawnLocation, FRotator::ZeroRotator);
 	
+	// Use the max value for uint8 to indicated generation of random shape
 	if ((uint8)Shape == 0xFF)
 	{
 		Shape = this->PickRandomShape();
@@ -82,6 +89,7 @@ void APlayField::SpawnNewTetromino(ETetrominoShape Shape)
 
 	this->ActiveTetromino->GenerateShape(Shape);
 
+	// Recenter the tetromino based on its newly generated shape
 	this->Shift({ -(float)FMath::DivideAndRoundDown(this->ActiveTetromino->GetDimensions().X, 2), 0 });
 }
 
@@ -107,29 +115,46 @@ FVector APlayField::GetFieldPositionLocation(FVector2D FieldPosition)
 	return location;
 }
 
-void APlayField::ShiftDown()
+void APlayField::OnShiftDown()
 {
 	this->Shift({ 0, -1 });
 }
 
-void APlayField::ShiftLeft()
+void APlayField::OnShiftLeft()
 {
 	this->Shift({ -1, 0 });
 }
 
-void APlayField::ShiftRight()
+void APlayField::OnShiftRight()
 {
 	this->Shift({ 1, 0 });
 }
 
+void APlayField::OnSpawnTetromino()
+{
+	this->SpawnNewTetromino((ETetrominoShape)0xFF);
+}
+
 void APlayField::Shift(FVector2D Direction)
 {
-	FVector newLocation = this->ActiveTetromino->GetActorLocation();
+	if (ActiveTetromino)
+	{
+		FVector newLocation = this->ActiveTetromino->GetActorLocation();
 
-	newLocation.X += Direction.X * ABlock::SIZE;
-	newLocation.Z += Direction.Y * ABlock::SIZE;
-	
-	UE_LOG(LogTemp, Warning, TEXT("%s -> %s | %s -> %f"), *this->ActiveTetromino->GetActorLocation().ToString(), *newLocation.ToString(), *Direction.ToString(), Direction.X * ABlock::SIZE);
+		newLocation.X += Direction.X * ABlock::SIZE;
+		newLocation.Z += Direction.Y * ABlock::SIZE;
 
-	this->ActiveTetromino->SetActorLocation(newLocation);
+		UE_LOG(LogTemp, Warning, TEXT("%s -> %s | %s -> %f"), *this->ActiveTetromino->GetActorLocation().ToString(), *newLocation.ToString(), *Direction.ToString(), Direction.X * ABlock::SIZE);
+
+		this->ActiveTetromino->SetActorLocation(newLocation);
+	}
+}
+
+void APlayField::PlaceActiveTetromino()
+{
+	if (ActiveTetromino)
+	{
+		this->PlacedTetrominoes.Push(this->ActiveTetromino);
+		this->ActiveTetromino = nullptr;
+	}
 }
