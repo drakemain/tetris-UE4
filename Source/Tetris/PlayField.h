@@ -59,12 +59,13 @@ private:
 	const int HEIGHT = 20;
 	const int WIDTH = 10;
 	
+	// The blocks that make up the border of the field
 	TArray<ABlock*> BorderBlocks;
+	// All placed tetrominoes
 	TArray<ATetromino*> PlacedTetrominoes;
+	// The tetromino that is being controlled by the player
 	ATetromino* ActiveTetromino;
 
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;
-
-	FVector CameraPosition;
 };

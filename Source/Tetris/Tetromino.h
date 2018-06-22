@@ -27,6 +27,7 @@ public:
 	// Sets default values for this actor's properties
 	ATetromino();
 
+	// Total number of defined shapes
 	static const uint8 SHAPE_COUNT = 7;
 
 protected:
@@ -37,14 +38,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Spawns blocks in appropriate positions to for the given shape. If there is already a shape, existing blocks will be destroyed first.
 	void GenerateShape(ETetrominoShape Shape);
 
 	FIntPoint GetDimensions() const;
 
 private:
+	// Spawns a block offset from the instance root
 	void spawnBlock(FVector2D OffsetLocation);
 
 	TArray<ABlock*> Blocks;
 
+	// Dimensions of the generated shape. Value is set when GenerateShape is called.
 	FIntPoint ShapeDimensions = FIntPoint::ZeroValue;
 };

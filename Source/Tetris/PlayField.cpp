@@ -74,7 +74,7 @@ void APlayField::CreateBorder()
 
 void APlayField::SpawnNewTetromino(ETetrominoShape Shape)
 {
-	// Spawn the tetromino's centered at the top of the field
+	// Spawn the tetromino centered at the top of the field
 	FVector SpawnLocation = this->GetFieldPositionLocation({ FMath::DivideAndRoundDown((float)this->WIDTH, 2.f), (float)this->HEIGHT });
 
 	this->PlaceActiveTetromino();
