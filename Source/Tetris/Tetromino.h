@@ -7,6 +7,17 @@
 #include "Block.h"
 #include "Tetromino.generated.h"
 
+enum class ETetrominoShape : uint8
+{
+	I,
+	J,
+	L,
+	O,
+	S,
+	T,
+	Z
+};
+
 UCLASS()
 class TETRIS_API ATetromino : public AActor
 {
@@ -23,6 +34,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	void GenerateShape(ETetrominoShape Shape);
+	void spawnBlock(FVector2D OffsetLocation);
 
 	TArray<ABlock*> Blocks;
 };

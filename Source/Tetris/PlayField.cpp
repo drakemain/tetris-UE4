@@ -27,7 +27,7 @@ void APlayField::BeginPlay()
 	Super::BeginPlay();
 	this->CreateBorder();
 
-	this->Camera->SetRelativeLocation(FVector{ -2600.f, -(float)((this->WIDTH * ABlock::SIZE) / 2), (float)((this->HEIGHT * ABlock::SIZE) / 2) });
+	this->Camera->SetRelativeLocation(FVector{ -2600.f, (float)((this->WIDTH * ABlock::SIZE) / 2), (float)((this->HEIGHT * ABlock::SIZE) / 2) });
 	this->SpawnNewTetromino();
 }
 
@@ -59,13 +59,13 @@ void APlayField::CreateBorder()
 {
 	for (int i = -1; i < this->HEIGHT; ++i) 
 	{
-		this->BorderBlocks.Push(this->CreateCell({ -1.f, (float)i }));
-		this->BorderBlocks.Push(this->CreateCell({ (float)this->WIDTH, (float)i }));
+		this->BorderBlocks.Push(this->CreateBlock({ -1.f, (float)i }));
+		this->BorderBlocks.Push(this->CreateBlock({ (float)this->WIDTH, (float)i }));
 	}
 
 	for (int i = 0; i < this->WIDTH; ++i) 
 	{
-		this->BorderBlocks.Push(this->CreateCell({ (float)i, -1.f }));
+		this->BorderBlocks.Push(this->CreateBlock({ (float)i, -1.f }));
 	}
 }
 
@@ -76,7 +76,7 @@ void APlayField::SpawnNewTetromino()
 	this->ActiveTetromino = this->GetWorld()->SpawnActor<ATetromino>(SpawnLocation, FRotator::ZeroRotator);
 }
 
-ABlock* APlayField::CreateCell(FVector2D FieldPosition)
+ABlock* APlayField::CreateBlock(FVector2D FieldPosition)
 {
 	FVector SpawnLocation = this->GetFieldPositionLocation(FieldPosition);
 

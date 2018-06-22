@@ -34,7 +34,7 @@ private:
 	void CreateBorder();
 	void SpawnNewTetromino();
 
-	ABlock* CreateCell(FVector2D FieldPosition);
+	ABlock* CreateBlock(FVector2D FieldPosition);
 
 	// Map the 2D position on the field to 3d world coordinates
 	FVector GetFieldPositionLocation(FVector2D FieldPosition);
