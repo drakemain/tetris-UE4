@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Block.h"
+#include "Tetromino.h"
 #include "Runtime/Engine/Classes/Camera/CameraComponent.h"
 #include "PlayField.generated.h"
 
@@ -31,16 +32,23 @@ public:
 
 private:
 	void CreateBorder();
+	void SpawnNewTetromino();
+
+	ABlock* CreateCell(FVector2D FieldPosition);
+
+	// Map the 2D position on the field to 3d world coordinates
+	FVector GetFieldPositionLocation(FVector2D FieldPosition);
 
 	void ShiftDown();
 	void ShiftLeft();
 	void ShiftRight();
+	void Shift(FVector2D Direction);
 
 	const int HEIGHT = 20;
 	const int WIDTH = 10;
-
-	ABlock* CreateCell(FVector2D FieldPosition);
+	
 	TArray<ABlock*> BorderBlocks;
+	ATetromino* ActiveTetromino;
 
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;

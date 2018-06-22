@@ -28,6 +28,7 @@ void APlayField::BeginPlay()
 	this->CreateBorder();
 
 	this->Camera->SetRelativeLocation(FVector{ -2600.f, -(float)((this->WIDTH * ABlock::SIZE) / 2), (float)((this->HEIGHT * ABlock::SIZE) / 2) });
+	this->SpawnNewTetromino();
 }
 
 // Called every frame
@@ -46,7 +47,7 @@ void APlayField::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	{
 		PlayerInputComponent->BindAction("ShiftDown", IE_Pressed, this, &APlayField::ShiftDown);
 		PlayerInputComponent->BindAction("ShiftLeft", IE_Pressed, this, &APlayField::ShiftLeft);
-		PlayerInputComponent->BindAction("ShiftRight", IE_Pressed, this, &APlayField::ShiftLeft);
+		PlayerInputComponent->BindAction("ShiftRight", IE_Pressed, this, &APlayField::ShiftRight);
 	}
 	else
 	{
@@ -68,28 +69,53 @@ void APlayField::CreateBorder()
 	}
 }
 
-void APlayField::ShiftDown()
+void APlayField::SpawnNewTetromino()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SHIFT DOWN"));
-}
+	FVector SpawnLocation = this->GetFieldPositionLocation({ FMath::DivideAndRoundDown((float)this->WIDTH, 2.f), (float)this->HEIGHT });
 
-void APlayField::ShiftLeft()
-{
-	UE_LOG(LogTemp, Warning, TEXT("SHIFT LEFT"));
-}
-
-void APlayField::ShiftRight()
-{
-	UE_LOG(LogTemp, Warning, TEXT("SHIFT RIGHT"));
+	this->ActiveTetromino = this->GetWorld()->SpawnActor<ATetromino>(SpawnLocation, FRotator::ZeroRotator);
 }
 
 ABlock* APlayField::CreateCell(FVector2D FieldPosition)
 {
-	FVector FieldLocation = this->GetActorLocation();
-	FVector SpawnLocation = FVector(FieldLocation);
-
-	SpawnLocation.X += FieldPosition.X * ABlock::SIZE;
-	SpawnLocation.Z += FieldPosition.Y * ABlock::SIZE;
+	FVector SpawnLocation = this->GetFieldPositionLocation(FieldPosition);
 
 	return this->GetWorld()->SpawnActor<ABlock>(SpawnLocation, FRotator::ZeroRotator);
+}
+
+FVector APlayField::GetFieldPositionLocation(FVector2D FieldPosition)
+{
+	FVector location = this->GetActorLocation();
+
+	location.X += FieldPosition.X * ABlock::SIZE;
+	location.Z += FieldPosition.Y * ABlock::SIZE;
+
+	return location;
+}
+
+void APlayField::ShiftDown()
+{
+	this->Shift({ 0, -1 });
+}
+
+void APlayField::ShiftLeft()
+{
+	this->Shift({ -1, 0 });
+}
+
+void APlayField::ShiftRight()
+{
+	this->Shift({ 1, 0 });
+}
+
+void APlayField::Shift(FVector2D Direction)
+{
+	FVector newLocation = this->ActiveTetromino->GetActorLocation();
+
+	newLocation.X += Direction.X * ABlock::SIZE;
+	newLocation.Z += Direction.Y * ABlock::SIZE;
+	
+	UE_LOG(LogTemp, Warning, TEXT("%s -> %s | %s -> %f"), *this->ActiveTetromino->GetActorLocation().ToString(), *newLocation.ToString(), *Direction.ToString(), Direction.X * ABlock::SIZE);
+
+	this->ActiveTetromino->SetActorLocation(newLocation);
 }
