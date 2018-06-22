@@ -44,9 +44,10 @@ public:
 	FIntPoint GetDimensions() const;
 
 private:
-	// Spawns a block offset from the instance root
-	void spawnBlock(FVector2D OffsetLocation);
+	// Spawns a block offset from the instance root by block size
+	ABlock* SpawnBlock(FVector2D OffsetLocation);
 
+	// The blocks that the tetromino instance is comprised of
 	TArray<ABlock*> Blocks;
 
 	// Dimensions of the generated shape. Value is set when GenerateShape is called.

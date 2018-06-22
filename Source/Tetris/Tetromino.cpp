@@ -123,13 +123,11 @@ void ATetromino::GenerateShape(ETetrominoShape Shape)
 			{
 				if (ShapeMatrix->operator[](i)[j] != 0)
 				{
-					this->spawnBlock({ (float)j, (float)ShapeMatrix->Num() - i - 1 });
+					this->Blocks.Push(this->SpawnBlock({ (float)j, (float)ShapeMatrix->Num() - i - 1 }));
 				}
 			}
 		}
-	}
-
-	
+	}	
 }
 
 FIntPoint ATetromino::GetDimensions() const
@@ -137,12 +135,14 @@ FIntPoint ATetromino::GetDimensions() const
 	return this->ShapeDimensions;
 }
 
-void ATetromino::spawnBlock(FVector2D OffsetLocation)
+ABlock* ATetromino::SpawnBlock(FVector2D OffsetLocation)
 {
 	FVector BlockLocation = this->GetActorLocation();
 	BlockLocation.X += OffsetLocation.X * ABlock::SIZE;
 	BlockLocation.Z += OffsetLocation.Y * ABlock::SIZE;
 
-	this->Blocks.Push(this->GetWorld()->SpawnActor<ABlock>(BlockLocation, FRotator::ZeroRotator));
-	this->Blocks.Last()->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	ABlock* newBlock = this->GetWorld()->SpawnActor<ABlock>(BlockLocation, FRotator::ZeroRotator);
+	newBlock->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+
+	return newBlock;
 }
