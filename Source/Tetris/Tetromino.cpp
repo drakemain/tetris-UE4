@@ -31,26 +31,26 @@ TTetrominoShape SHAPE_L
 
 TTetrominoShape SHAPE_O
 {
-	{ 1, 1 },
-	{ 1, 1 }
+	{ 4, 4 },
+	{ 4, 4 }
 };
 
 TTetrominoShape SHAPE_S
 {
-	{ 0, 1, 1 },
-	{ 1, 1, 0 }
+	{ 0, 5, 5 },
+	{ 5, 5, 0 }
 };
 
 TTetrominoShape SHAPE_T
 {
-	{ 1, 1, 1 },
-	{ 0, 1, 0 }
+	{ 6, 6, 6 },
+	{ 0, 6, 0 }
 };
 
 TTetrominoShape SHAPE_Z
 {
-	{ 1, 1, 0 },
-	{ 0, 1, 1 }
+	{ 7, 7, 0 },
+	{ 0, 7, 7 }
 };
 
 // Sets default values
@@ -123,7 +123,8 @@ void ATetromino::GenerateShape(ETetrominoShape Shape)
 			{
 				if (ShapeMatrix->operator[](i)[j] != 0)
 				{
-					this->Blocks.Push(this->SpawnBlock({ (float)j, (float)ShapeMatrix->Num() - i - 1 }));
+					this->Blocks.Push(this->spawnBlock({ (float)j, (float)ShapeMatrix->Num() - i - 1 }));
+					this->Blocks.Last()->setMaterial(this->MapMaterial(ShapeMatrix->operator[](i)[j]));
 				}
 			}
 		}
@@ -135,7 +136,7 @@ FIntPoint ATetromino::GetDimensions() const
 	return this->ShapeDimensions;
 }
 
-ABlock* ATetromino::SpawnBlock(FVector2D OffsetLocation)
+ABlock* ATetromino::spawnBlock(FVector2D OffsetLocation)
 {
 	FVector BlockLocation = this->GetActorLocation();
 	BlockLocation.X += OffsetLocation.X * ABlock::SIZE;
@@ -145,4 +146,28 @@ ABlock* ATetromino::SpawnBlock(FVector2D OffsetLocation)
 	newBlock->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	return newBlock;
+}
+
+UMaterialInstance * ATetromino::MapMaterial(uint8 MaterialIndex)
+{
+	switch (MaterialIndex)
+	{
+	case 0: return nullptr;
+
+	case 1:	return ABlock::MaterialCyan;
+
+	case 2: return ABlock::MaterialPurple;
+
+	case 3: return ABlock::MaterialPink;
+
+	case 4: return ABlock::MaterialGrey;
+
+	case 5: return ABlock::MaterialRed;
+
+	case 6: return ABlock::MaterialYellow;
+
+	case 7: return ABlock::MaterialGreen;
+
+	default: return nullptr;
+	}
 }

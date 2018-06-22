@@ -16,6 +16,17 @@ public:
 	// Sets default values for this actor's properties
 	ABlock();
 
+	static class UMaterialInstance* MaterialRed;
+	static class UMaterialInstance* MaterialGreen;
+	static class UMaterialInstance* MaterialGrey;
+	static class UMaterialInstance* MaterialYellow;
+	static class UMaterialInstance* MaterialCyan;
+	static class UMaterialInstance* MaterialPink;
+	static class UMaterialInstance* MaterialPurple;
+
+
+	static const int SIZE = 100;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -26,7 +37,7 @@ public:
 
 	int getSize() const;
 
-	static const int SIZE = 100;
+	void setMaterial(UMaterialInstance* Material);
 
 private:
 	UPROPERTY(EditAnywhere)

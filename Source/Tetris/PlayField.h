@@ -48,6 +48,7 @@ private:
 	void OnShiftDown();
 	void OnShiftLeft();
 	void OnShiftRight();
+	void OnRotate();
 	void OnSpawnTetromino();
 
 	// Move active tetromino to new field position relative to current position

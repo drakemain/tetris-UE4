@@ -45,11 +45,14 @@ public:
 
 private:
 	// Spawns a block offset from the instance root by block size
-	ABlock* SpawnBlock(FVector2D OffsetLocation);
+	ABlock* spawnBlock(FVector2D OffsetLocation);
 
 	// The blocks that the tetromino instance is comprised of
 	TArray<ABlock*> Blocks;
 
 	// Dimensions of the generated shape. Value is set when GenerateShape is called.
 	FIntPoint ShapeDimensions = FIntPoint::ZeroValue;
+
+	// Maps uint8 values from shape matrices to colored material
+	UMaterialInstance* MapMaterial(uint8 MaterialIndex);
 };
