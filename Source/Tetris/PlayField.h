@@ -44,6 +44,9 @@ private:
 	// Map the 2D position on the field to 3d world coordinates
 	FVector GetFieldPositionLocation(FVector2D FieldPosition);
 
+	// Map 3D world coordinates to a 2D position on the field.
+	FVector2D GetLocationAsFieldPosition(FVector Location);
+
 	/* User input methods */
 	void OnShiftDown();
 	void OnShiftLeft();
@@ -53,6 +56,8 @@ private:
 
 	// Move active tetromino to new field position relative to current position
 	void Shift(FVector2D Direction);
+
+	bool isMoveInBounds(FVector2D ProjectedPosition);
 
 	// Push active tetromino to PlacedTetrominos and set ActiveTetromino to nullptr
 	void PlaceActiveTetromino();

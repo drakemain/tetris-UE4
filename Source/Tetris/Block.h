@@ -36,9 +36,13 @@ public:
 
 	int getSize() const;
 
+	FVector getCenterLocation() const;
+
 	void setMaterial(UMaterialInstance* Material);
 
 private:
+	USceneComponent* Center;
+
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
 

@@ -5,6 +5,7 @@
 #include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Engine/StaticMesh.h"
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
 UMaterialInstance* ABlock::MaterialRed = nullptr;
 UMaterialInstance* ABlock::MaterialGreen = nullptr;
@@ -18,9 +19,10 @@ UMaterialInstance* ABlock::MaterialPurple = nullptr;
 ABlock::ABlock()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	this->Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	this->Center = CreateDefaultSubobject<USceneComponent>(TEXT("Center"));
 	this->SetRootComponent(this->Mesh);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> newMesh(TEXT("StaticMesh'/Game/Mesh/Cube.Cube'"));
@@ -133,18 +135,24 @@ void ABlock::BeginPlay()
 {
 	Super::BeginPlay();
 
+	this->Center->AddRelativeLocation(FVector{ 0.f, 0.f, (float)ABlock::SIZE / 2.f });
+	this->Center->AttachToComponent(this->RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called every frame
 void ABlock::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 int ABlock::getSize() const
 {
 	return this->SIZE;
+}
+
+FVector ABlock::getCenterLocation() const
+{
+	return this->Center->GetComponentLocation();
 }
 
 void ABlock::setMaterial(UMaterialInstance * Material)

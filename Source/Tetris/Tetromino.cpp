@@ -141,14 +141,12 @@ void ATetromino::Tick(float DeltaTime)
 
 void ATetromino::Rotate()
 {
-	++this->RotationState;
+	/*++this->RotationState;
 
 	if (this->RotationState >= 4) 
 	{
 		this->RotationState = 0;
-	}
-
-
+	}*/
 
 	FRotator Rotation{ -90.f, 0.f, 0.f };
 	
@@ -231,6 +229,11 @@ FIntPoint ATetromino::GetDimensions() const
 	return this->ShapeDimensions;
 }
 
+void ATetromino::GetBlocks(TArray<ABlock*>& OutBlocks) const
+{
+	OutBlocks = this->Blocks;
+}
+
 ABlock* ATetromino::spawnBlock(FVector2D OffsetLocation)
 {
 	FVector BlockLocation = this->GetActorLocation();
@@ -255,7 +258,7 @@ void ATetromino::Reset()
 
 	this->Center->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
-	this->RotationState = 0;
+	//this->RotationState = 0;
 	
 	this->RootComponent->AddRelativeLocation({ 0.f, 0.f, -(float)ABlock::SIZE / 2.f });
 }

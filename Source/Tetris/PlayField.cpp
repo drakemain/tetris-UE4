@@ -144,6 +144,16 @@ FVector APlayField::GetFieldPositionLocation(FVector2D FieldPosition)
 	return location;
 }
 
+FVector2D APlayField::GetLocationAsFieldPosition(FVector Location)
+{
+	FVector2D position;
+
+	position.X = FMath::DivideAndRoundDown(Location.X, (float)ABlock::SIZE);
+	position.Y = FMath::DivideAndRoundDown(Location.Z, (float)ABlock::SIZE);
+
+	return position;
+}
+
 void APlayField::OnShiftDown()
 {
 	this->Shift({ 0, -1 });
@@ -172,6 +182,8 @@ void APlayField::OnSpawnTetromino()
 
 void APlayField::Shift(FVector2D Direction)
 {
+	if (!this->isMoveInBounds(Direction)) { UE_LOG(LogTemp, Warning, TEXT("OOB"));  return; }
+
 	if (ActiveTetromino)
 	{
 		FVector newLocation = this->ActiveTetromino->GetActorLocation();
@@ -183,6 +195,31 @@ void APlayField::Shift(FVector2D Direction)
 
 		this->ActiveTetromino->SetActorLocation(newLocation);
 	}
+}
+
+bool APlayField::isMoveInBounds(FVector2D PositionDelta)
+{
+	TArray<ABlock*> Blocks;
+
+	this->ActiveTetromino->GetBlocks(Blocks);
+
+	for (ABlock* Block : Blocks)
+	{
+		FVector2D ProjectedPosition = this->GetLocationAsFieldPosition(Block->getCenterLocation());
+		ProjectedPosition.X += PositionDelta.X;
+		ProjectedPosition.Y += PositionDelta.Y;
+
+		bool badLeftBound = ProjectedPosition.X < 0;
+		bool badRightBound = ProjectedPosition.X > (this->WIDTH) - 1;
+		bool badBottomBound = ProjectedPosition.Y < 0;
+		
+		if (badLeftBound || badRightBound || badBottomBound)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void APlayField::PlaceActiveTetromino()

@@ -45,6 +45,8 @@ public:
 
 	FIntPoint GetDimensions() const;
 
+	void GetBlocks(TArray<ABlock*>& OutBlocks) const;
+
 private:
 	// Spawns a block offset from the instance root by block size
 	ABlock* spawnBlock(FVector2D OffsetLocation);
@@ -59,7 +61,7 @@ private:
 
 	USceneComponent* Center;
 
-	uint8 RotationState = 0;
+	// uint8 RotationState = 0;
 
 	// Maps uint8 values from shape matrices to colored material
 	UMaterialInstance* MapMaterial(uint8 MaterialIndex);
