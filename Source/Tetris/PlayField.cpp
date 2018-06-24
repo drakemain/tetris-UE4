@@ -3,6 +3,7 @@
 #include "PlayField.h"
 
 #include "Runtime/Engine/Classes/Engine/World.h"
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -48,6 +49,7 @@ void APlayField::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 		PlayerInputComponent->BindAction("ShiftDown", IE_Pressed, this, &APlayField::OnShiftDown);
 		PlayerInputComponent->BindAction("ShiftLeft", IE_Pressed, this, &APlayField::OnShiftLeft);
 		PlayerInputComponent->BindAction("ShiftRight", IE_Pressed, this, &APlayField::OnShiftRight);
+		PlayerInputComponent->BindAction("Rotate", IE_Pressed, this, &APlayField::OnRotate);
 
 		// Temporary for testing
 		PlayerInputComponent->BindAction("SpawnNewTetromino", IE_Pressed, this, &APlayField::OnSpawnTetromino);
@@ -56,6 +58,30 @@ void APlayField::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No input component!"));
 	}
+
+	for (int i = 0; i < this->HEIGHT; ++i)
+	{
+		for (int j = 0; j < this->WIDTH; ++j)
+		{
+			FVector Extent;
+			DrawDebugPoint(
+				this->GetWorld(),
+				this->GetFieldPositionLocation({ (float)j, (float)i }),
+				10.f,
+				FColor::Green,
+				true
+			);
+		}
+	}
+
+	DrawDebugCircle(
+		this->GetWorld(),
+		this->GetFieldPositionLocation({ 0.f, 0.f }),
+		51.f,
+		20,
+		FColor::Green,
+		true
+	);
 }
 
 void APlayField::CreateBorder()
@@ -63,12 +89,15 @@ void APlayField::CreateBorder()
 	for (int i = -1; i < this->HEIGHT; ++i) 
 	{
 		this->BorderBlocks.Push(this->CreateBlock({ -1.f, (float)i }));
+		this->BorderBlocks.Last()->SetActorLocation(this->BorderBlocks.Last()->GetActorLocation() - FVector{ 0.f, 0.f, (float)ABlock::SIZE / 2.f });
 		this->BorderBlocks.Push(this->CreateBlock({ (float)this->WIDTH, (float)i }));
+		this->BorderBlocks.Last()->SetActorLocation(this->BorderBlocks.Last()->GetActorLocation() - FVector{ 0.f, 0.f, (float)ABlock::SIZE / 2.f });
 	}
 
 	for (int i = 0; i < this->WIDTH; ++i) 
 	{
 		this->BorderBlocks.Push(this->CreateBlock({ (float)i, -1.f }));
+		this->BorderBlocks.Last()->SetActorLocation(this->BorderBlocks.Last()->GetActorLocation() - FVector{ 0.f, 0.f, (float)ABlock::SIZE / 2.f });
 	}
 }
 
@@ -130,8 +159,14 @@ void APlayField::OnShiftRight()
 	this->Shift({ 1, 0 });
 }
 
+void APlayField::OnRotate()
+{
+	this->ActiveTetromino->Rotate();
+}
+
 void APlayField::OnSpawnTetromino()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Spawning a new tetromino."));
 	this->SpawnNewTetromino((ETetrominoShape)0xFF);
 }
 

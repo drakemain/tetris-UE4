@@ -24,7 +24,6 @@ public:
 	static class UMaterialInstance* MaterialPink;
 	static class UMaterialInstance* MaterialPurple;
 
-
 	static const int SIZE = 100;
 
 protected:

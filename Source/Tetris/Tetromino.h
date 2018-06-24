@@ -38,6 +38,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void Rotate();
+
 	// Spawns blocks in appropriate positions to for the given shape. If there is already a shape, existing blocks will be destroyed first.
 	void GenerateShape(ETetrominoShape Shape);
 
@@ -47,11 +49,17 @@ private:
 	// Spawns a block offset from the instance root by block size
 	ABlock* spawnBlock(FVector2D OffsetLocation);
 
+	void Reset();
+
 	// The blocks that the tetromino instance is comprised of
 	TArray<ABlock*> Blocks;
 
 	// Dimensions of the generated shape. Value is set when GenerateShape is called.
 	FIntPoint ShapeDimensions = FIntPoint::ZeroValue;
+
+	USceneComponent* Center;
+
+	uint8 RotationState = 0;
 
 	// Maps uint8 values from shape matrices to colored material
 	UMaterialInstance* MapMaterial(uint8 MaterialIndex);

@@ -2,6 +2,7 @@
 
 #include "Tetromino.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
 typedef const TArray<TArray<uint8>> TTetrominoShape;
 
@@ -17,13 +18,11 @@ TTetrominoShape SHAPE_J
 {
 	{ 2, 0 },
 	{ 2, 0 },
-	{ 2, 0 },
 	{ 2, 2 }
 };
 
 TTetrominoShape SHAPE_L
 {
-	{ 0, 3 },
 	{ 0, 3 },
 	{ 0, 3 },
 	{ 3, 3 }
@@ -59,7 +58,8 @@ ATetromino::ATetromino()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	this->RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	this->SetRootComponent(CreateDefaultSubobject<USceneComponent>(TEXT("Root")));
+	this->Center = CreateDefaultSubobject<USceneComponent>(TEXT("Center"));
 }
 
 // Called when the game starts or when spawned
@@ -72,16 +72,96 @@ void ATetromino::BeginPlay()
 void ATetromino::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FVector TopLeft = this->Center->GetComponentLocation();
+	FVector TopRight = this->Center->GetComponentLocation();
+	FVector BottomLeft = this->Center->GetComponentLocation();
+	FVector BottomRight = this->Center->GetComponentLocation();
+
+	TopLeft.X -= (float)this->ShapeDimensions.X / 2.f * ABlock::SIZE; TopLeft.Z += (float)this->ShapeDimensions.Y / 2.f * ABlock::SIZE;
+	TopRight.X += (float)this->ShapeDimensions.X / 2.f * ABlock::SIZE; TopRight.Z += (float)this->ShapeDimensions.Y / 2.f * ABlock::SIZE;
+	BottomLeft.X -= (float)this->ShapeDimensions.X / 2.f * ABlock::SIZE; BottomLeft.Z -= (float)this->ShapeDimensions.Y / 2.f * ABlock::SIZE;
+	BottomRight.X += (float)this->ShapeDimensions.X / 2.f * ABlock::SIZE; BottomRight.Z -= (float)this->ShapeDimensions.Y / 2.f * ABlock::SIZE;
+
+	DrawDebugSphere(
+		this->GetWorld(),
+		TopLeft,
+		10.f,
+		20,
+		FColor::Black,
+		false,
+		.1f
+	);
+	DrawDebugSphere(
+		this->GetWorld(),
+		TopRight,
+		10.f,
+		20,
+		FColor::Black,
+		false,
+		.1f
+	);
+	DrawDebugSphere(
+		this->GetWorld(),
+		BottomLeft,
+		10.f,
+		20,
+		FColor::Black,
+		false,
+		.1f
+	);
+	DrawDebugSphere(
+		this->GetWorld(),
+		BottomRight,
+		10.f,
+		20,
+		FColor::Black,
+		false,
+		.1f
+	);
+	DrawDebugSphere(
+		this->GetWorld(),
+		this->Center->GetComponentLocation(),
+		105.f,
+		20,
+		FColor::Black,
+		false,
+		.1f
+	);
+	DrawDebugSphere(
+		this->GetWorld(),
+		this->GetActorLocation(),
+		51.f,
+		20,
+		FColor::Blue,
+		false,
+		.1f
+	);
+}
+
+void ATetromino::Rotate()
+{
+	++this->RotationState;
+
+	if (this->RotationState >= 4) 
+	{
+		this->RotationState = 0;
+	}
+
+
+
+	FRotator Rotation{ -90.f, 0.f, 0.f };
+	
+	this->RootComponent->AddLocalRotation(Rotation);
+
+	int temp = this->ShapeDimensions.X;
+	this->ShapeDimensions.X = this->ShapeDimensions.Y;
+	this->ShapeDimensions.Y = temp;
 }
 
 void ATetromino::GenerateShape(ETetrominoShape Shape)
 {
-	for (ABlock* block : this->Blocks)
-	{
-		block->Destroy();
-	}
-
-	this->Blocks.Empty(4);
+	this->Reset();
 
 	const TTetrominoShape* ShapeMatrix;
 
@@ -128,7 +208,22 @@ void ATetromino::GenerateShape(ETetrominoShape Shape)
 				}
 			}
 		}
-	}	
+
+		FVector Center = this->GetActorLocation();
+
+		Center.X += ((float)this->ShapeDimensions.X / 2.f * (float)ABlock::SIZE) - (float)ABlock::SIZE / 2.f;
+		Center.Z += (((float)this->ShapeDimensions.Y * (float)ABlock::SIZE) / 2.f);
+
+		this->RootComponent->AddRelativeLocation({ 0.f, 0.f, (float)ABlock::SIZE / 2.f });
+
+		this->Center->SetWorldLocation(Center);
+		this->Center->AttachToComponent(this->RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+
+		for (ABlock* Block : this->Blocks)
+		{
+			Block->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		}
+	}
 }
 
 FIntPoint ATetromino::GetDimensions() const
@@ -143,9 +238,26 @@ ABlock* ATetromino::spawnBlock(FVector2D OffsetLocation)
 	BlockLocation.Z += OffsetLocation.Y * ABlock::SIZE;
 
 	ABlock* newBlock = this->GetWorld()->SpawnActor<ABlock>(BlockLocation, FRotator::ZeroRotator);
-	newBlock->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 	return newBlock;
+}
+
+void ATetromino::Reset()
+{
+	for (ABlock* block : this->Blocks)
+	{
+		block->Destroy();
+	}
+
+	this->Blocks.Empty(4);
+
+	this->ShapeDimensions = FIntPoint::ZeroValue;
+
+	this->Center->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+
+	this->RotationState = 0;
+	
+	this->RootComponent->AddRelativeLocation({ 0.f, 0.f, -(float)ABlock::SIZE / 2.f });
 }
 
 UMaterialInstance * ATetromino::MapMaterial(uint8 MaterialIndex)
